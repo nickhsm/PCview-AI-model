@@ -104,7 +104,7 @@ history = model.fit(
 
 model.save("model/trained_model.keras")
 
-with open("model/class_names.txt", "w", encoding="UTF-8") as file:
+with open("model/class_names.json", "w", encoding="UTF-8") as file:
     dictionary = {}
     dictionary["classes"] = class_names
     file.writelines(json.dumps(dictionary))

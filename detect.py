@@ -7,7 +7,7 @@ import json
 
 model = keras.models.load_model("model/trained_model.keras")
 
-with open("model/class_names.txt", "r", encoding="UTF-8") as file:
+with open("model/class_names.json", "r", encoding="UTF-8") as file:
     dictionary = json.load(file)
 
 class_names = dictionary["classes"]
