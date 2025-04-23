@@ -5,26 +5,29 @@ from tensorflow.keras.models import Sequential
 import numpy as np
 import json
 
-model = keras.models.load_model("model/trained_model.keras")
+def detect_picture():
+    model = keras.models.load_model("model/trained_model.keras")
 
-with open("model/class_names.json", "r", encoding="UTF-8") as file:
-    dictionary = json.load(file)
+    with open("model/class_names.json", "r", encoding="UTF-8") as file:
+        dictionary = json.load(file)
 
-class_names = dictionary["classes"]
+    class_names = dictionary["classes"]
 
-img_height = 180
-img_width = 180
+    img_height = 180
+    img_width = 180
 
-image_to_test = "cpu.jpg"
+    image_to_test = "cpu.jpg"
 
-img = tf.keras.utils.load_img(
-        image_to_test, target_size=(img_height, img_width)
-        )
+    img = tf.keras.utils.load_img(
+            image_to_test, target_size=(img_height, img_width)
+            )
 
-img_array = tf.keras.utils.img_to_array(img)
-img_array = tf.expand_dims(img_array, 0)
+    img_array = tf.keras.utils.img_to_array(img)
+    img_array = tf.expand_dims(img_array, 0)
 
-predictions = model.predict(img_array)
-score = tf.nn.softmax(predictions[0])
+    predictions = model.predict(img_array)
+    score = tf.nn.softmax(predictions[0])
 
-print("This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_names[np.argmax(score)], 100 * np.max(score)))
+    print("This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_names[np.argmax(score)], 100 * np.max(score)))
+
+detect_picture()
