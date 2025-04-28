@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import PIL
 import tensorflow as tf
 import json
 
@@ -57,14 +54,16 @@ val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 # Augment data
 data_augmentation = keras.Sequential(
         [
-            layers.RandomFlip("horizontal",
-                              input_shape=(img_height,
-                                           img_width,
-                                           3)),
-                              layers.RandomRotation(0.1),
-                              layers.RandomZoom(0.1),
-                              ]
-        )
+            layers.RandomFlip(mode="horizontal_and_vertical",
+                              # The input_shape must be the first one
+                              input_shape=(img_height, img_width, 3)
+                              ),
+            layers.RandomRotation(0.5),
+            layers.RandomZoom(0.2),
+            layers.RandomTranslation(height_factor=0.2,
+                                     width_factor=0.2),
+        ]
+    )
 
 # Creating the model
 # It's essentialy a blueprint of how to train later
@@ -79,11 +78,18 @@ model = Sequential([
     layers.MaxPooling2D(),
     layers.Conv2D(64, 3, padding='same', activation='relu'),
     layers.MaxPooling2D(),
-    layers.Dropout(0.2),
+    layers.Conv2D(128, 3, padding='same', activation='relu'),
+    layers.MaxPooling2D(),
+    layers.Conv2D(256, 3, padding='same', activation='relu'),
+    layers.MaxPooling2D(),
+    layers.Conv2D(512, 3, padding='same', activation='relu'),
+    layers.MaxPooling2D(),
+    layers.Dropout(0.5),
     layers.Flatten(),
-    layers.Dense(128, activation='relu'),
+    layers.Dense(256, activation='relu'),
     layers.Dense(num_classes, name="outputs")
     ])
+
 
 # Compile the model
 model.compile(optimizer='adam',
@@ -94,12 +100,21 @@ model.compile(optimizer='adam',
 print("\n\nHere is a summery of the model:\n")
 model.summary()
 
+# Earlystopping
+early_stop = keras.callbacks.EarlyStopping(
+        monitor="val_loss",
+        verbose=1,
+        patience=3,
+        min_delta=0.001
+        )
+
 # Train the model
-epochs=20
+epochs=100
 history = model.fit(
         train_ds,
         validation_data=val_ds,
-        epochs=epochs
+        epochs=epochs,
+        callbacks=[early_stop]
         )
 
 model.save("model/trained_model.keras")
