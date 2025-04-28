@@ -93,12 +93,21 @@ model.compile(optimizer='adam',
 print("\n\nHere is a summery of the model:\n")
 model.summary()
 
+# Earlystopping
+early_stop = keras.callbacks.EarlyStopping(
+        monitor="val_loss",
+        verbose=1,
+        patience=3,
+        min_delta=0.001
+        )
+
 # Train the model
-epochs=20
+epochs=100
 history = model.fit(
         train_ds,
         validation_data=val_ds,
-        epochs=epochs
+        epochs=epochs,
+        callbacks=[early_stop]
         )
 
 model.save("model/trained_model.keras")
