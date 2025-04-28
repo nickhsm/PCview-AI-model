@@ -57,14 +57,16 @@ val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 # Augment data
 data_augmentation = keras.Sequential(
         [
-            layers.RandomFlip("horizontal",
+            layers.RandomFlip("horizontal_and_vertical",
                               input_shape=(img_height,
                                            img_width,
                                            3)),
-                              layers.RandomRotation(0.1),
-                              layers.RandomZoom(0.1),
-                              ]
-        )
+            layers.RandomRotation(0.5),
+            layers.RandomZoom(0.2),
+            layers.RandomTranslation(height_factor=0.2,
+                                     width_factor=0.2),
+        ]
+    )
 
 # Creating the model
 # It's essentialy a blueprint of how to train later
