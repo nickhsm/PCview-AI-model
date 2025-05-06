@@ -82,7 +82,7 @@ model = Sequential([
     layers.MaxPooling2D(),
     layers.Dropout(0.5),
     layers.Flatten(),
-    layers.Dense(256, activation='relu'),
+    layers.Dense(1024, activation='relu'),
     layers.Dense(num_classes, name="outputs")
     ])
 
@@ -100,7 +100,7 @@ model.summary()
 early_stop = keras.callbacks.EarlyStopping(
         monitor="val_loss",
         verbose=1,
-        patience=3,
+        patience=10,
         min_delta=0.001
         )
 
